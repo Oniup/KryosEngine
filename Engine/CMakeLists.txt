@@ -6,3 +6,9 @@ target_sources(KryosRuntime
     PRIVATE ${KRYOS_HEADERS}
 )
 target_include_directories(KryosRuntime PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_definitions(KryosRuntime
+    PUBLIC
+        KRYOS_RHI_OPENGL
+        # KRYOS_RHI_VULKAN
+)
+

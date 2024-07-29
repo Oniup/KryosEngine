@@ -13,27 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "Core/Input.h"
-#include <Core/Console.h>
-#include <RHI/Context.h>
+#pragma once
 
-int main()
-{
-    Console console;
-    RenderHardwareContext context;
-    Input input;
+#include "RHI/WindowHandle.h"
+#include <string_view>
 
-    console.Initialize();
-    console.AddOutput<ConsoleTerminalOutput>();
+struct RenderHardwareContext {
+    WindowHandle Window;
 
-    context.Initialize("KryosEngine");
-    input.Initialize(context.Window);
-
-    while (!context.Window.Closing()) {
-        context.Window.SwapBuffers();
-        input.PollEvents();
-    }
-
-    context.Destroy();
-    console.Destroy();
-}
+    void Initialize(const std::string_view& title, int width = -1, int height = -1,
+                    int flags = WindowHandle::DefaultFlags);
+    void InitializeRHI();
+    void Destroy();
+};

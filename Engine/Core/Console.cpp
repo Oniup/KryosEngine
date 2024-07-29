@@ -21,20 +21,20 @@ static Console* InstancePtr = nullptr;
 const char* ConsoleMessage::SeverityFlagToCString(ConsoleMessage::Severity severity)
 {
     switch (severity) {
-        case ConsoleMessage::Trace:
-            return "Trace";
-        case ConsoleMessage::Verbose:
-            return "Verbose";
-        case ConsoleMessage::Info:
-            return "Info";
-        case ConsoleMessage::Warning:
-            return "Warning";
-        case ConsoleMessage::Error:
-            return "Error";
-        case ConsoleMessage::Fatal:
-            return "Fatal";
-        default:
-            return "Invalid";
+    case ConsoleMessage::Trace:
+        return "Trace";
+    case ConsoleMessage::Verbose:
+        return "Verbose";
+    case ConsoleMessage::Info:
+        return "Info";
+    case ConsoleMessage::Warning:
+        return "Warning";
+    case ConsoleMessage::Error:
+        return "Error";
+    case ConsoleMessage::Fatal:
+        return "Fatal";
+    default:
+        return "Invalid";
     }
 }
 
@@ -43,28 +43,27 @@ std::string ConsoleOutput::_FormatHead(const ConsoleMessage& msg)
     fmt::text_style style;
     if (Flags & ConsoleOutput_ColorBit) {
         switch (msg.SeverityFlag) {
-            case ConsoleMessage::Trace:
-                style = fmt::fg(fmt::color::dim_gray);
-                break;
-            case ConsoleMessage::Verbose:
-                style = fmt::fg(fmt::color::dim_gray);
-                break;
-            case ConsoleMessage::Info:
-                style = fmt::fg(fmt::color::sky_blue);
-                break;
-            case ConsoleMessage::Warning:
-                style = fmt::emphasis::italic | fmt::fg(fmt::color::yellow);
-                break;
-            case ConsoleMessage::Error:
-                style =
-                    fmt::emphasis::italic | fmt::emphasis::bold | fmt::fg(fmt::color::orange_red);
-                break;
-            case ConsoleMessage::Fatal:
-                style = fmt::emphasis::italic | fmt::fg(fmt::color::white) |
-                        fmt::bg(fmt::color::dark_red);
-                break;
-            default:
-                break;
+        case ConsoleMessage::Trace:
+            style = fmt::fg(fmt::color::dim_gray);
+            break;
+        case ConsoleMessage::Verbose:
+            style = fmt::fg(fmt::color::dim_gray);
+            break;
+        case ConsoleMessage::Info:
+            style = fmt::fg(fmt::color::sky_blue);
+            break;
+        case ConsoleMessage::Warning:
+            style = fmt::emphasis::italic | fmt::fg(fmt::color::yellow);
+            break;
+        case ConsoleMessage::Error:
+            style = fmt::emphasis::italic | fmt::emphasis::bold | fmt::fg(fmt::color::orange_red);
+            break;
+        case ConsoleMessage::Fatal:
+            style =
+                fmt::emphasis::italic | fmt::fg(fmt::color::white) | fmt::bg(fmt::color::dark_red);
+            break;
+        default:
+            break;
         }
     }
 
@@ -128,11 +127,11 @@ void Console::PrintToOutputs(int line, const std::string& msg, const char* file,
                              ConsoleMessage::Severity severity)
 {
     ConsoleMessage message {
-        .Line = line,
-        .Message = msg,
-        .File = file,
-        .Function = function,
-        .Context = context,
+        .Line         = line,
+        .Message      = msg,
+        .File         = file,
+        .Function     = function,
+        .Context      = context,
         .SeverityFlag = severity,
     };
     for (ConsoleOutput* output : InstancePtr->Outputs) {
@@ -145,7 +144,7 @@ void Console::PrintToOutputs(int line, const std::string& msg, const char* file,
 void Console::Initialize(int severity_flags)
 {
     SeverityFlags = severity_flags;
-    InstancePtr = this;
+    InstancePtr   = this;
 }
 
 void Console::Destroy()

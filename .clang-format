@@ -1,45 +1,27 @@
 ---
+# Core
 BasedOnStyle: LLVM
 BreakBeforeBraces: Stroustrup
-AccessModifierOffset: -4
-AlignAfterOpenBracket: Align
-AlignConsecutiveShortCaseStatements:
-  Enabled:          true
-  AcrossEmptyLines: true
-  AcrossComments:   true
-AlignConsecutiveMacros:
-  Enabled:          true
-  AcrossEmptyLines: false
-  AcrossComments:   false
-  AlignCompound:    true
-  PadOperators:     false
-AlignEscapedNewlines: Left
-AlignOperands: AlignAfterOperator
-AllowShortFunctionsOnASingleLine: InlineOnly
-AlwaysBreakTemplateDeclarations: true
-PackConstructorInitializers: NextLineOnly
+Standard: c++17
+UseTab: Never
 ColumnLimit: 99
-IndentCaseBlocks: true
-IndentCaseLabels: true
-IndentExternBlock: AfterExternBlock
-IndentGotoLabels: true
-IndentPPDirectives: AfterHash
-IndentRequiresClause: true
-IndentWrappedFunctionNames: true
-IndentWidth: 4
-PPIndentWidth: 4
-ConstructorInitializerIndentWidth: 6
-NamespaceIndentation: Inner
 InsertBraces: true
+IncludeBlocks: Merge
+# Alignment
 PointerAlignment: Left
 QualifierAlignment: Left
 ReferenceAlignment: Pointer
-ReflowComments: true
-RemoveBracesLLVM: false
-IncludeBlocks: Merge
 SpaceBeforeCpp11BracedList: true
 SpaceBeforeCtorInitializerColon: true
-Standard: c++17
-UseTab: Never
+AlwaysBreakTemplateDeclarations: true
+AlignConsecutiveAssignments: true
+# Indentation
+IndentWrappedFunctionNames: true
+IndentWidth: 4
+ConstructorInitializerIndentWidth: 6
+PackConstructorInitializers: NextLineOnly
+PPIndentWidth: 4
+IndentPPDirectives: AfterHash
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: InlineOnly
 ...
-
