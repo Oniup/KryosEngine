@@ -1,0 +1,14 @@
+{
+    "name": "BasicPhong",
+    "glsl_version": "version 450",
+    "sources": [
+        {
+            "filename": "./PhongVert.glsl",
+            "type": "Vertex"
+        },
+        {
+            "filename": "./PhongFrag.glsl",
+            "type": "Fragment"
+        }
+    ]
+}

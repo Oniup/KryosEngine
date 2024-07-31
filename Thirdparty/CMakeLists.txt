@@ -20,30 +20,38 @@ option(GLFW_BUILD_TESTS OFF)
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_INSTALL OFF)
 
+option(IMGUI_OPENGL ON)
+option(IMGUI_VULKAN OFF)
+
 # Sources
 # -------------------------------------------------------------------------------
 # Graphics
 add_subdirectory(glad)
 add_subdirectory(glfw)
+add_subdirectory(imgui)
 
 # Linking to Kryos
 # -------------------------------------------------------------------------------
 target_compile_definitions(
-    KryosRuntime PUBLIC FMT_HEADER_ONLY
+    KryosRuntime
+    PUBLIC
+        FMT_HEADER_ONLY
 )
 
 target_include_directories(
     KryosRuntime
-    PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/
-            ${CMAKE_CURRENT_SOURCE_DIR}/glm
-            ${CMAKE_CURRENT_SOURCE_DIR}/fmt/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/glfw/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/glad/include
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/
+        ${CMAKE_CURRENT_SOURCE_DIR}/glm
+        ${CMAKE_CURRENT_SOURCE_DIR}/fmt/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/glfw/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/glad/include
 
-            ${CMAKE_CURRENT_SOURCE_DIR}/entt/src
-            ${CMAKE_CURRENT_SOURCE_DIR}/imgui
+        ${CMAKE_CURRENT_SOURCE_DIR}/entt/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui
 )
 target_link_libraries(
     KryosRuntime
-    PRIVATE glfw glad
+    PRIVATE
+        glfw glad imgui
 )

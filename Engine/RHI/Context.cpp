@@ -15,14 +15,13 @@
 
 #include "RHI/Context.h"
 
-void RenderHardwareContext::Initialize(const std::string_view& title, int width, int height,
-                                       int flags)
+void RHIContext::Initialize(const std::string_view& title, int width, int height, int flags)
 {
     Window.InitializeGLFW();
     Window.Initialize("Kryos Engine", -1, -1);
 }
 
-void RenderHardwareContext::Destroy()
+void RHIContext::Destroy()
 {
     Window.Destroy();
     Window.TerminateGLFW();

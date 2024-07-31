@@ -1,8 +1,6 @@
 # Used Godot Engine's gitignore as a template
 # Original source: https://github.com/godotengine/godot/blob/master/.gitignore#L3
 
-kryos-engine.log
-
 # Build output
 ###############################################################################
 
@@ -44,6 +42,7 @@ lib
 *.ox
 *.Plo
 *.so
+*.exe
 
 # IDE's
 ###############################################################################

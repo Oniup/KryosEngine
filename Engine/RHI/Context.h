@@ -15,11 +15,14 @@
 
 #pragma once
 
+#include "RHI/Shader.h"
 #include "RHI/WindowHandle.h"
 #include <string_view>
+#include <vector>
 
-struct RenderHardwareContext {
+struct RHIContext {
     WindowHandle Window;
+    std::vector<RHIShader> Shaders;
 
     void Initialize(const std::string_view& title, int width = -1, int height = -1,
                     int flags = WindowHandle::DefaultFlags);

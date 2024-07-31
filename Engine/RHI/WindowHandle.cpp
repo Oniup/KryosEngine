@@ -1,9 +1,27 @@
+// This file is part of https://github.com/Oniup/KryosEngine
+// Copyright (c) 2024 Oniup (https://github.com/Oniup)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "RHI/WindowHandle.h"
 #include "Core/Console.h"
 
 void WindowHandle::InitializeGLFW()
 {
     RHI_CONDITION_FATAL(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW");
+    glfwSetErrorCallback([](int error_number, const char* description) {
+        CONTEXT_ERROR("GLFW", "{} => {}", error_number, description);
+    });
 }
 
 void WindowHandle::TerminateGLFW()
@@ -13,11 +31,16 @@ void WindowHandle::TerminateGLFW()
 
 bool WindowHandle::ValidMode(int flags)
 {
-    int target = WindowHandle_WindowedModeBit | WindowHandle_BorderlessModeBit |
-                 WindowHandle_FullscreenModeBit;
-    int enabled = target & flags;
-    return enabled == 0 || enabled == WindowHandle_WindowedModeBit ||
-           enabled == WindowHandle_BorderlessModeBit || enabled == WindowHandle_FullscreenModeBit;
+    int window_modes = WindowHandle_WindowedModeBit | WindowHandle_BorderlessModeBit |
+                       WindowHandle_FullscreenModeBit;
+
+    int enabled_mode = window_modes & flags;
+
+    bool mode = enabled_mode == 0 || enabled_mode == WindowHandle_WindowedModeBit ||
+                enabled_mode == WindowHandle_BorderlessModeBit ||
+                enabled_mode == WindowHandle_FullscreenModeBit;
+
+    return mode;
 }
 
 bool WindowHandle::Closing() const

@@ -16,11 +16,12 @@
 #include "Core/Input.h"
 #include <Core/Console.h>
 #include <RHI/Context.h>
+#include <RHI/Shader.h>
 
 int main()
 {
     Console console;
-    RenderHardwareContext context;
+    RHIContext context;
     Input input;
 
     console.Initialize();

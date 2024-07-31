@@ -63,6 +63,15 @@ void WindowHandle::Destroy()
 void WindowHandle::SwapBuffers()
 {
     glfwSwapBuffers(WindowPtr);
+    if (Flags & WindowHandle_UpdateViewportPerFrame) {
+        UpdateViewport();
+    }
+}
+
+void WindowHandle::UpdateViewport() const
+{
+    glm::ivec2 size = FramebufferSize();
+    glViewport(0, 0, size.x, size.y);
 }
 
 #endif
