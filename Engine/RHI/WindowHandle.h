@@ -40,14 +40,11 @@ struct WindowHandle {
     GLFWwindow* WindowPtr = nullptr;
     int Flags             = DefaultFlags;
 
-    static void InitializeGLFW();
-    static void TerminateGLFW();
-
     static bool ValidMode(int flags);
 
     // RHI specific
-    void Initialize(const std::string_view& title, int width, int height,
-                    int flags = DefaultFlags);
+    static WindowHandle Create(const std::string_view& title, int width, int height,
+                               int flags = DefaultFlags);
     void Destroy();
 
     void SwapBuffers();

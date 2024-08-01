@@ -19,72 +19,9 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-static Input* s_InstancePtr = nullptr;
+static InputContext* s_InputInstance = nullptr;
 
-#define KY_REG_ONCE_IMPL(func, input_type, code, pressed)                                         \
-    bool result = func(code);                                                                     \
-    if (result) {                                                                                 \
-        result = s_InstancePtr->_RegisterOnce(input_type, code, pressed);                         \
-    }                                                                                             \
-    return result
-
-#define KY_REG_ONCE_WITH_HANDLE_IMPL(func, handle, input_type, code, pressed)                     \
-    bool result = func(handle, code);                                                             \
-    if (result) {                                                                                 \
-        result = s_InstancePtr->_RegisterOnce(input_type, code, pressed);                         \
-    }                                                                                             \
-    return result
-
-void Input::Initialize(WindowHandle& window)
-{
-    s_InstancePtr            = this;
-    s_InstancePtr->WindowPtr = &window;
-    for (RegisteredInput& reg : s_InstancePtr->RegBuffer) {
-        reg.Type = InputType_Unknown;
-    }
-}
-
-bool Input::KeyPressed(KeyCode code)
-{
-    KY_REG_ONCE_IMPL(KeyPress, InputType_Keyboard, code, true);
-}
-
-bool Input::KeyReleased(KeyCode code)
-{
-    KY_REG_ONCE_IMPL(KeyRelease, InputType_Keyboard, code, false);
-}
-
-bool Input::KeyPress(KeyCode code)
-{
-    return glfwGetKey(s_InstancePtr->WindowPtr->WindowPtr, code) == GLFW_PRESS;
-}
-
-bool Input::KeyRelease(KeyCode code)
-{
-    return glfwGetKey(s_InstancePtr->WindowPtr->WindowPtr, code) == GLFW_RELEASE;
-}
-
-bool Input::MousePressed(MouseButton button)
-{
-    KY_REG_ONCE_IMPL(MousePress, InputType_Mouse, button, true);
-}
-
-bool Input::MouseReleased(MouseButton button)
-{
-    KY_REG_ONCE_IMPL(MouseRelease, InputType_Mouse, button, false);
-}
-
-bool Input::MousePress(MouseButton button)
-{
-    return glfwGetMouseButton(s_InstancePtr->WindowPtr->WindowPtr, button) == GLFW_PRESS;
-}
-
-bool Input::MouseRelease(MouseButton button)
-{
-    return glfwGetMouseButton(s_InstancePtr->WindowPtr->WindowPtr, button) == GLFW_RELEASE;
-}
-
-std::string_view Input::TypeToString(InputType type)
+std::string_view InputTypeToString(InputType type)
 {
     switch (type) {
     case InputType_Keyboard:
@@ -98,7 +35,7 @@ std::string_view Input::TypeToString(InputType type)
     }
 }
 
-std::string_view Input::MouseModeToString(MouseMode mode)
+std::string_view MouseModeToString(MouseMode mode)
 {
     switch (mode) {
     case MouseMode::MouseMode_Visable:
@@ -112,12 +49,26 @@ std::string_view Input::MouseModeToString(MouseMode mode)
     }
 }
 
-void Input::PollEvents()
+InputContext InputContext::Create(WindowHandle* window)
+{
+    InputContext input = {
+        .WindowPtr      = window,
+        .RegActiveCount = 0,
+        .RegBuffer      = {},
+    };
+    for (RegisteredInput& reg : input.RegBuffer) {
+        reg.Type = InputType_Unknown;
+    }
+    s_InputInstance = &input;
+    return input;
+}
+
+void InputContext::PollEvents()
 {
     glfwPollEvents();
     size_t reg_counted = 0;
-    for (RegisteredInput& reg : s_InstancePtr->RegBuffer) {
-        if (reg_counted == s_InstancePtr->RegActiveCount) {
+    for (RegisteredInput& reg : s_InputInstance->RegBuffer) {
+        if (reg_counted == s_InputInstance->RegActiveCount) {
             break;
         }
         else if (reg.Type == InputType_Unknown) {
@@ -130,12 +81,12 @@ void Input::PollEvents()
         }
         else {
             reg.Type = InputType_Unknown;
-            s_InstancePtr->RegActiveCount--;
+            s_InputInstance->RegActiveCount--;
         }
     }
 }
 
-bool Input::_RegisterOnce(InputType type, int code, bool pressed)
+bool InputContext::RegisterOnce(InputType type, int code, bool pressed)
 {
     int free_index = -1;
     for (size_t i = 0; i < RegBuffer.size(); i++) {
@@ -153,7 +104,7 @@ bool Input::_RegisterOnce(InputType type, int code, bool pressed)
 
     CONTEXT_CONDITION_ERROR_RETURN("INPUT", free_index != -1, false,
                                    "Toggle register buffer full, cannot add {} {}",
-                                   TypeToString(type), code);
+                                   InputTypeToString(type), code);
 
     RegBuffer[free_index] = RegisteredInput {
         .Type           = type,
@@ -163,4 +114,51 @@ bool Input::_RegisterOnce(InputType type, int code, bool pressed)
     };
     RegActiveCount++;
     return true;
+}
+
+#define REG_ONCE_IMPL(func, input_type, code, pressed)                                            \
+    bool result = func(code);                                                                     \
+    if (result) {                                                                                 \
+        result = s_InputInstance->RegisterOnce(input_type, code, pressed);                        \
+    }                                                                                             \
+    return result
+
+bool Input::KeyPressed(KeyCode code)
+{
+    REG_ONCE_IMPL(Input::KeyPress, InputType_Keyboard, code, true);
+}
+
+bool Input::KeyReleased(KeyCode code)
+{
+    REG_ONCE_IMPL(Input::KeyRelease, InputType_Keyboard, code, false);
+}
+
+bool Input::KeyPress(KeyCode code)
+{
+    return glfwGetKey(s_InputInstance->WindowPtr->WindowPtr, code) == GLFW_PRESS;
+}
+
+bool Input::KeyRelease(KeyCode code)
+{
+    return glfwGetKey(s_InputInstance->WindowPtr->WindowPtr, code) == GLFW_RELEASE;
+}
+
+bool Input::MousePressed(MouseButton button)
+{
+    REG_ONCE_IMPL(Input::MousePress, InputType_Mouse, button, true);
+}
+
+bool Input::MouseReleased(MouseButton button)
+{
+    REG_ONCE_IMPL(Input::MouseRelease, InputType_Mouse, button, false);
+}
+
+bool Input::MousePress(MouseButton button)
+{
+    return glfwGetMouseButton(s_InputInstance->WindowPtr->WindowPtr, button) == GLFW_PRESS;
+}
+
+bool Input::MouseRelease(MouseButton button)
+{
+    return glfwGetMouseButton(s_InputInstance->WindowPtr->WindowPtr, button) == GLFW_RELEASE;
 }

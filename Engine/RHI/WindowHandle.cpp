@@ -14,20 +14,6 @@
 // limitations under the License.
 
 #include "RHI/WindowHandle.h"
-#include "Core/Console.h"
-
-void WindowHandle::InitializeGLFW()
-{
-    RHI_CONDITION_FATAL(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW");
-    glfwSetErrorCallback([](int error_number, const char* description) {
-        CONTEXT_ERROR("GLFW", "{} => {}", error_number, description);
-    });
-}
-
-void WindowHandle::TerminateGLFW()
-{
-    glfwTerminate();
-}
 
 bool WindowHandle::ValidMode(int flags)
 {

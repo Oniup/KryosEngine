@@ -223,13 +223,15 @@ enum ConsoleOutputFlags : uint32_t {
 };
 
 struct ConsoleOutput {
-    uint32_t Flags = ConsoleOutput_FlushPerMessageBit | ConsoleOutput_ColorBit |
-                     ConsoleOutput_BreakAfterInfoBit | ConsoleOutput_BreakAfterHeaderBit;
+    static constexpr int DefaultFlags = ConsoleOutput_FlushPerMessageBit | ConsoleOutput_ColorBit |
+                                        ConsoleOutput_BreakAfterInfoBit |
+                                        ConsoleOutput_BreakAfterHeaderBit;
+    uint32_t Flags;
 
     virtual ~ConsoleOutput() {}
 
-    virtual void Initialize(uint32_t flags = ConsoleOutput_NoneBit) = 0;
-    virtual void Destroy()                                          = 0;
+    virtual void Initialize(uint32_t flags = DefaultFlags) = 0;
+    virtual void Destroy()                                 = 0;
 
     virtual std::string_view Name() const               = 0;
     virtual void PrintOutput(const ConsoleMessage& msg) = 0;
@@ -239,7 +241,7 @@ struct ConsoleOutput {
 };
 
 struct ConsoleTerminalOutput : public ConsoleOutput {
-    void Initialize(uint32_t flags = ConsoleOutput_NoneBit) override;
+    void Initialize(uint32_t flags = ConsoleOutput::DefaultFlags) override;
     inline void Destroy() override {}
 
     inline std::string_view Name() const override { return "Error Terminal Output"; }
@@ -247,15 +249,27 @@ struct ConsoleTerminalOutput : public ConsoleOutput {
 };
 
 struct Console {
+    static constexpr int DefaultFlags = ConsoleMessage::Info | ConsoleMessage::Warning |
+                                        ConsoleMessage::Error | ConsoleMessage::Fatal;
+
     std::vector<ConsoleOutput*> Outputs;
-    uint32_t SeverityFlags = ConsoleMessage::Info | ConsoleMessage::Warning |
-                             ConsoleMessage::Error | ConsoleMessage::Fatal;
+    int SeverityFlags;
 
     static void PrintToOutputs(int line, const std::string& msg, const char* file,
                                const char* function, const char* context,
                                ConsoleMessage::Severity severity);
 
-    void Initialize(int severity_flags = -1);
+    static Console Create(int severity_flags = DefaultFlags);
+
+    template <typename... TOutputs>
+    static Console CreateAndInitOutputs(int severity_flags = DefaultFlags,
+                                        int output_flags   = ConsoleOutput::DefaultFlags)
+    {
+        Console console = Create(severity_flags);
+        (console.AddOutput<TOutputs>(output_flags), ...);
+        return console;
+    }
+
     void Destroy();
 
     void AddOutput(ConsoleOutput* output, uint32_t flags = ConsoleOutput_NoneBit);

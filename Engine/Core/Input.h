@@ -35,6 +35,9 @@ enum MouseMode {
 
 };
 
+std::string_view InputTypeToString(InputType type);
+std::string_view MouseModeToString(MouseMode mode);
+
 struct RegisteredInput {
     InputType Type      = InputType_Unknown;
     int Code            = -1;
@@ -42,32 +45,31 @@ struct RegisteredInput {
     bool Pressed        = false;
 };
 
-struct Input {
+struct InputContext {
     static constexpr size_t RegisterOnceBufferSize = 16;
 
     WindowHandle* WindowPtr = nullptr;
     size_t RegActiveCount   = 0;
     std::array<RegisteredInput, RegisterOnceBufferSize> RegBuffer;
 
-    void Initialize(WindowHandle& window);
-
-    static bool KeyPressed(KeyCode code);
-    static bool KeyReleased(KeyCode code);
-
-    static bool KeyPress(KeyCode code);
-    static bool KeyRelease(KeyCode code);
-
-    static bool MousePressed(MouseButton button);
-    static bool MouseReleased(MouseButton button);
-
-    static bool MousePress(MouseButton button);
-    static bool MouseRelease(MouseButton button);
-
-    static std::string_view TypeToString(InputType type);
-    static std::string_view MouseModeToString(MouseMode mode);
+    static InputContext Create(WindowHandle* window);
 
     void PollEvents();
-
-private:
-    bool _RegisterOnce(InputType type, int code, bool pressed);
+    bool RegisterOnce(InputType type, int code, bool pressed);
 };
+
+namespace Input {
+
+bool KeyPressed(KeyCode code);
+bool KeyReleased(KeyCode code);
+
+bool KeyPress(KeyCode code);
+bool KeyRelease(KeyCode code);
+
+bool MousePressed(MouseButton button);
+bool MouseReleased(MouseButton button);
+
+bool MousePress(MouseButton button);
+bool MouseRelease(MouseButton button);
+
+} // namespace Input

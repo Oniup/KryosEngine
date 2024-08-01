@@ -1,3 +1,18 @@
+// This file is part of https://github.com/Oniup/KryosEngine
+// Copyright (c) 2024 Oniup (https://github.com/Oniup)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifdef KRYOS_RHI_OPENGL
 
 #    include "RHI/WindowHandle.h"
@@ -6,7 +21,7 @@
 
 static bool s_GladInitialized = false;
 
-void WindowHandle::Initialize(const std::string_view& title, int width, int height, int flags)
+WindowHandle WindowHandle::Create(const std::string_view& title, int width, int height, int flags)
 {
     RHI_CONDITION_FATAL(title[title.size()] == '\0', "Title string must be null terminated");
     RHI_CONDITION_FATAL(ValidMode(flags),
@@ -48,8 +63,10 @@ void WindowHandle::Initialize(const std::string_view& title, int width, int heig
         glfwSwapInterval(1);
     }
 
-    WindowPtr = window;
-    Flags     = flags;
+    return WindowHandle {
+        .WindowPtr = window,
+        .Flags     = flags,
+    };
 }
 
 void WindowHandle::Destroy()

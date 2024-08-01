@@ -15,26 +15,26 @@
 
 #include "Core/Input.h"
 #include <Core/Console.h>
-#include <RHI/Context.h>
 #include <RHI/Shader.h>
+#include <Renderer/Context.h>
 
 int main()
 {
-    Console console;
-    RHIContext context;
-    Input input;
+    Console console          = Console::CreateAndInitOutputs<ConsoleTerminalOutput>();
+    RendererContext renderer = RendererContext::Create("Kryos Engine");
+    InputContext input       = InputContext::Create(&renderer.Window);
 
-    console.Initialize();
-    console.AddOutput<ConsoleTerminalOutput>();
+    while (!renderer.Window.Closing()) {
+        renderer.Window.SwapBuffers();
 
-    context.Initialize("KryosEngine");
-    input.Initialize(context.Window);
+        constexpr KeyCode keycode = KeyCode_Enter;
+        if (Input::KeyPressed(keycode)) {
+            INFO("Pressed Keycode ID: {}", (int)keycode);
+        }
 
-    while (!context.Window.Closing()) {
-        context.Window.SwapBuffers();
         input.PollEvents();
     }
 
-    context.Destroy();
+    renderer.Destroy();
     console.Destroy();
 }

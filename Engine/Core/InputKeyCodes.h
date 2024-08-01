@@ -152,23 +152,13 @@ enum KeyCode {
 };
 
 enum KeyMod {
-    // If this bit is set one or more Shift keys were held down.
-    KeyMod_Shift = 0x0001,
-    // If this bit is set one or more control keys were held down.
-    KeyMod_Control = 0x0002,
-    //  If this bit is set one or more alt keys were held down.
-    KeyMod_Alt = 0x0004,
-    //  If this bit is set one or more super keys were held down.
-    KeyMod_Super = 0x0008,
-    // If this bit is set the caps lock key is enabled and the @ref
-    // GLFW_LOCK_KEY_MODS input mode is set.
+    KeyMod_Shift    = 0x0001,
+    KeyMod_Control  = 0x0002,
+    KeyMod_Alt      = 0x0004,
+    KeyMod_Super    = 0x0008,
     KeyMod_CapsLock = 0x0010,
-    // If this bit is set the num lock key is enabled and the @ref
-    // GLFW_LOCK_KEY_MODS input mode is set.
-    KeyMod_NumLock = 0x0020,
+    KeyMod_NumLock  = 0x0020,
 };
-
-/*! @} */
 
 enum MouseButton {
     MouseButton_1      = 0,

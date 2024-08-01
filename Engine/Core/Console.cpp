@@ -16,7 +16,7 @@
 #include "Core/Console.h"
 #include <fmt/color.h>
 
-static Console* InstancePtr = nullptr;
+static Console* s_ConsoleInstance = nullptr;
 
 const char* ConsoleMessage::SeverityFlagToCString(ConsoleMessage::Severity severity)
 {
@@ -105,9 +105,7 @@ std::string ConsoleOutput::_FormatBody(const ConsoleMessage& msg)
 
 void ConsoleTerminalOutput::Initialize(uint32_t flags)
 {
-    if (flags != ConsoleOutput_NoneBit) {
-        Flags = flags;
-    }
+    Flags = flags;
 }
 
 void ConsoleTerminalOutput::PrintOutput(const ConsoleMessage& msg)
@@ -134,17 +132,21 @@ void Console::PrintToOutputs(int line, const std::string& msg, const char* file,
         .Context      = context,
         .SeverityFlag = severity,
     };
-    for (ConsoleOutput* output : InstancePtr->Outputs) {
-        if (InstancePtr->SeverityFlags & severity) {
+    for (ConsoleOutput* output : s_ConsoleInstance->Outputs) {
+        if (s_ConsoleInstance->SeverityFlags & severity) {
             output->PrintOutput(message);
         }
     }
 }
 
-void Console::Initialize(int severity_flags)
+Console Console::Create(int severity_flags)
 {
-    SeverityFlags = severity_flags;
-    InstancePtr   = this;
+    Console console = {
+        .Outputs       = {},
+        .SeverityFlags = severity_flags,
+    };
+    s_ConsoleInstance = &console;
+    return console;
 }
 
 void Console::Destroy()

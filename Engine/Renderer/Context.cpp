@@ -1,3 +1,4 @@
+
 // This file is part of https://github.com/Oniup/KryosEngine
 // Copyright (c) 2024 Oniup (https://github.com/Oniup)
 //
@@ -13,16 +14,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "RHI/Context.h"
+#define GLFW_INCLUDE_NONE
 
-void RHIContext::Initialize(const std::string_view& title, int width, int height, int flags)
+#include "Renderer/Context.h"
+#include "Core/Console.h"
+#include <GLFW/glfw3.h>
+
+RendererContext RendererContext::Create(const std::string_view& title, int width, int height,
+                                        int flags)
 {
-    Window.InitializeGLFW();
-    Window.Initialize("Kryos Engine", -1, -1);
+    RHI_CONDITION_FATAL(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW");
+    glfwSetErrorCallback([](int error_number, const char* description) {
+        CONTEXT_ERROR("GLFW", "{} => {}", error_number, description);
+    });
+
+    RendererContext renderer = {
+        .Window = WindowHandle::Create(title, width, height, flags),
+    };
+    return renderer;
 }
 
-void RHIContext::Destroy()
+void RendererContext::Destroy()
 {
     Window.Destroy();
-    Window.TerminateGLFW();
+    glfwTerminate();
 }
